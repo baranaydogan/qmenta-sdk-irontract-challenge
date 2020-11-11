@@ -145,9 +145,9 @@ def run(context):
                " -pathway=stop_at_exit /root/local_exec_output/mask.nii.gz" +
                " -pathway=require_entry " + inject_file_path +
                " -seed_count " + numberOfStreamlines +
-               " -minRadiusOfCurvature " + dataSupportExponent +
+               " -dataSupportExponent " + dataSupportExponent +
                " -minFODamp 0.05" +
-               " -dataSupportExponent 0.1" +
+               " -minRadiusOfCurvature 0.1" +
                " -probeLength 0.025" +
                " -writeInterval 40" +
                " -verboseLevel 0" +
