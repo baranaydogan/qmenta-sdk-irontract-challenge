@@ -1,0 +1,44 @@
+[
+    {
+        "type": "container",
+        "id": "input",
+        "title": "IronTract",
+        "file_filter": "(c_HARDI(m'HARDI') OR c_DSI(m'DSI'))",
+        "in_filter": [
+            "mri_brain_data"
+        ],
+        "out_filter": [],
+        "anchor": 1,
+        "mandatory": 1,
+        "batch": 1
+    },
+    {
+        "type": "single_choice",
+        "id": "postprocessing",
+        "title": "Post Processing Method: ",
+        "options": [["ALL", "ALL"], ["EPFL", "EPFL"],["VUMC", "VUMC"]],
+        "default": "ALL"
+    },
+    {
+        "type": "single_choice",
+        "id": "dataset",
+        "title": "Dataset: ",
+        "options": [["HCPL", "HCPL"],["DSI", "DSI"]],
+        "default": "HCPL"
+    },
+    {
+        "type": "single_choice",
+        "id": "numberOfStreamlines",
+        "title": "numberOfStreamlines: ",
+        "options": [["10", "10"],["1000", "1000"],["10000", "10000"],["20000", "20000"],["100000", "100000"],["100000", "100000"]],
+        "default": "10"
+    },
+    {
+        "type": "single_choice",
+        "id": "dataSupportExponent",
+        "title": "dataSupportExponent: ",
+        "options": [["0.1", "0.1"],["0.25", "0.25"],["0.5", "0.5"],["1", "1"]],
+        "default": "0.1"
+    }
+    
+]
