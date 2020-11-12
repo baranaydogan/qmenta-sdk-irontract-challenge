@@ -80,8 +80,8 @@ def run(context):
     #########################################
    
     # Use 1/4 of provided bvals        
-    bval    = '/root/local_exec_output/prep.' + acqType + '.bval'
-    bvec    = '/root/local_exec_output/prep.' + acqType + '.bvec'
+    bval    = '/root/prep.' + acqType + '.bval'
+    bvec    = '/root/prep.' + acqType + '.bvec'
     
     tmp     = np.loadtxt(input_bval_file_name)
     tmp     = np.reshape(tmp,(-1,len(tmp)))/4
@@ -100,11 +100,11 @@ def run(context):
               bvec + " " + bval + 
               " -force " + 
               dwi + 
-              " /root/local_exec_output/mask.nii.gz")
+              " /root/mask.nii.gz")
     
-    os.system("/miniconda/bin/mrfilter -force /root/local_exec_output/mask.nii.gz median /root/local_exec_output/mask.nii.gz")
-    os.system("/miniconda/bin/mrfilter -force /root/local_exec_output/mask.nii.gz smooth /root/local_exec_output/mask.nii.gz")
-    os.system("/miniconda/bin/mrthreshold -force /root/local_exec_output/mask.nii.gz /root/local_exec_output/mask.nii.gz")    
+    os.system("/miniconda/bin/mrfilter -force /root/mask.nii.gz median /root/mask.nii.gz")
+    os.system("/miniconda/bin/mrfilter -force /root/mask.nii.gz smooth /root/mask.nii.gz")
+    os.system("/miniconda/bin/mrthreshold -force /root/mask.nii.gz /root/mask.nii.gz")    
     
     #############################
     # Compute response function #
@@ -114,11 +114,11 @@ def run(context):
                "-fslgrad " + 
                bvec + " " + bval + 
                " -force " + 
-               " -mask /root/local_exec_output/mask.nii.gz " + dwi +
-               " /root/local_exec_output/wm_response.txt" + 
-               " /root/local_exec_output/gm_response.txt" + 
-               " /root/local_exec_output/csf_response.txt" +
-               " -voxels /root/local_exec_output/responSel.nii.gz")
+               " -mask /root/mask.nii.gz " + dwi +
+               " /root/wm_response.txt" + 
+               " /root/gm_response.txt" + 
+               " /root/csf_response.txt" +
+               " -voxels /root/responSel.nii.gz")
     
     #####################
     # Compute FOD image #
@@ -128,10 +128,10 @@ def run(context):
               "-fslgrad " + 
                bvec + " " + bval + 
                " -force " + 
-               " -mask /root/local_exec_output/mask.nii.gz msmt_csd " + dwi +
-               " /root/local_exec_output/wm_response.txt /root/local_exec_output/wmfod.nii.gz " +
-               " /root/local_exec_output/gm_response.txt /root/local_exec_output/gm.nii.gz " +
-               " /root/local_exec_output/csf_response.txt /root/local_exec_output/csf.nii.gz")
+               " -mask /root/mask.nii.gz msmt_csd " + dwi +
+               " /root/wm_response.txt /root/wmfod.nii.gz " +
+               " /root/gm_response.txt /root/gm.nii.gz " +
+               " /root/csf_response.txt /root/csf.nii.gz")
 
 
     ################
@@ -140,9 +140,9 @@ def run(context):
 
     # Get tractogram using Trekker (.vtk output) 
     os.system("./trekker_linux_x64_v0.7" +
-               " -fod /root/local_exec_input/wmfod.nii.gz" + 
-               " -seed_image /root/local_exec_output/mask.nii.gz" + 
-               " -pathway=stop_at_exit /root/local_exec_output/mask.nii.gz" +
+               " -fod /root/wmfod.nii.gz" + 
+               " -seed_image /root/mask.nii.gz" + 
+               " -pathway=stop_at_exit /root/mask.nii.gz" +
                " -pathway=require_entry " + inject_file_path +
                " -seed_count " + numberOfStreamlines +
                " -dataSupportExponent " + dataSupportExponent +
@@ -151,16 +151,16 @@ def run(context):
                " -probeLength 0.025" +
                " -writeInterval 40" +
                " -verboseLevel 0" +
-               " -output /root/local_exec_output/tractogram.vtk")
+               " -output /root/tractogram.vtk")
     
     ################################
     # Tractogram format conversion #
     ################################
     
     # Convert .vtk to .trk (the long way, in order to have a smaller docker image)
-    os.system("/miniconda/bin/tckconvert -force /root/local_exec_output/tractogram.vtk /root/local_exec_output/tractogram.tck")
-    streamlines = nib.streamlines.load('/root/local_exec_output/tractogram.tck').streamlines
-    nii         = nib.load('/root/local_exec_output/mask.nii.gz')
+    os.system("/miniconda/bin/tckconvert -force /root/tractogram.vtk /root/tractogram.tck")
+    streamlines = nib.streamlines.load('/root/tractogram.tck').streamlines
+    nii         = nib.load('/root/mask.nii.gz')
     affine      = nii.affine
     
 
